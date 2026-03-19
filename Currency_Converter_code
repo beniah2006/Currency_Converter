@@ -1,0 +1,206 @@
+import tkinter as tk
+from tkinter import ttk
+import requests
+
+def convert_currency(*_):
+    try:
+        if not entry.get() or not box_from.get() or not box_to.get():
+            result_label.config(text="Enter amount and currencies")
+            return
+
+        amount = float(entry.get())
+        from_c = box_from.get().split("-")[0].strip()
+        to_c = box_to.get().split("-")[0].strip()
+
+        if len(from_c) != 3 or len(to_c) != 3:
+            return
+
+        url = f"https://api.exchangerate-api.com/v4/latest/{from_c}"
+        data = requests.get(url, timeout=5).json()
+
+        rate = data.get("rates", {}).get(to_c)
+
+        if rate is None:
+            result_lable.config(text="Invalid Currency")
+            return
+        result = rate * amount
+        result_label.config(text=f"{result:.2f} {to_c}")
+
+    except ValueError:
+        result_label.config(text="Enter a valid number")
+    except requests.exceptions.RequestException:
+        result_lable.config(text="No internet connection")
+    except Exception:
+        result_label.config(text="Conversion Error")
+
+
+def filter_box(e, box):
+    typed = box.get().lower()
+
+    filtered = [v for v in values if typed in v.lower()]
+    box["values"] = matches or values
+
+# ---- UI Setup ----
+root = tk.Tk()
+root.title("Live Currency Converter")
+root.geometry("300x220")
+
+# ---- Currency data ----
+major_currencies = {"USD": "US dollar",
+                    "EUR": "Euro",
+                    "JPY": "Japanese Yen",
+                    "GBP": "British Pound",
+                    "AUD": "Australian Dollar",
+                    "CAD": "Canadian Dollar",
+                    "CHF": "Swiss Franc",
+                    "CNY": "Chinese Yuan",
+                    "HKD": "Hong Kong Dollar",
+                    "NZD": "New Zealand Dollar"}
+
+
+americas_currencies = {"ARS": "Argentine Peso",
+                       "BOB": "Bolivian Boliviano",
+                       "BRL": "Brazilian Real",
+                       "CLP": "Chilean Peso",
+                       "COP": "Colombian Peso",
+                       "CRC": "Costa Rican Colón",
+                       "CUP": "Cuban Peso",
+                       "DOP": "Dominican Peso",
+                       "GTQ": "Guatemalan Quetzal",
+                       "HNL": "Honduran Lempira",
+                       "HTG": "Haitian Gourde",
+                       "JMD": "Jamaican Dollar",
+                       "MXN": "Mexican Peso",
+                       "NIO": "Nicaraguan Córdoba",
+                       "PAB": "Panamanian Balboa",
+                       "PEN": "Peruvian Nuevo Sol",
+                       "PYG": "Paraguayan Guaraní",
+                       "SRD": "Suriname Dollar",
+                       "TTD": "Trinidad and Tobago Dollar",
+                       "UYU": "Uruguayan Peso",
+                       "VES": "Venezuelan Bolívar"}
+
+europe_currencies = {"BGN": "Bulgarian Lev",
+                     "CZK": "Czech Koruna",
+                     "DKK": "Danish Krone",
+                     "HUF": "Hungarian Forint",
+                     "ISK": "Icelandic Króna",
+                     "NOK": "Norwegian Krone",
+                     "PLN": "Polish Złoty",
+                     "RON": "Romanian Leu",
+                     "RSD": "Serbian Dinar",
+                     "SEK": "Swedish Krona",
+                     "TRY": "Turkish Lira",
+                     "UAH": "Ukrainian Hryvnia"}
+
+middle_east_currencies = {"AED": "UAE Dirham",
+                          "BHD": "Bahraini Dinar",
+                          "ILS": "Israeli New Shekel",
+                          "IQD": "Iraqi Dinar",
+                          "IRR": "Iranian Rial",
+                          "JOD": "Jordanian Dinar",
+                          "KWD": "Kuwaiti Dinar",
+                          "LBP": "Lebanese Pound",
+                          "OMR": "Omani Rial",
+                          "QAR": "Qatari Riyal",
+                          "SAR": "Saudi Riyal",
+                          "SYP": "Syrian Pound",
+                          "YER": "Yemeni Rial"}
+
+asia_currencies = {"AFN": "Afghan Afghani",
+                   "BDT": "Bangladeshi Taka",
+                   "BND": "Brunei Dollar",
+                   "KHR": "Cambodian Riel",
+                   "IDR": "Indonesian Rupiah",
+                   "INR": "Indian Rupee",
+                   "KZT": "Kazakhstani Tenge",
+                   "LAK": "Lao Kip",
+                   "LKR": "Sri Lankan Rupee",
+                   "MMK": "Myanmar Kyat",
+                   "MNT": "Mongolian Tögrög",
+                   "MYR": "Malaysian Ringgit",
+                   "NPR": "Nepalese Rupee",
+                   "PKR": "Pakistani Rupee",
+                   "PHP": "Philippine Peso",
+                   "SGD": "Singapore Dollar",
+                   "THB": "Thai Baht",
+                   "TJS": "Tajikistani Somoni",
+                   "TMT": "Turkmenistani Manat",
+                   "VND": "Vietnamese Ðông"}
+
+africa_currencies = {"DZD": "Algerian Dinar",
+                     "AOA": "Angolan Kwanza",
+                     "BWP": "Botswana Pula",
+                     "CDF": "Congolese Franc",
+                     "DJF": "Djiboutian Franc",
+                     "EGP": "Egyptian Pound",
+                     "ERN": "Eritrean Nakfa",
+                     "ETB": "Ethiopian Birr",
+                     "GHS": "Ghanaian Cedi",
+                     "GMD": "Gambian Dalasi",
+                     "GNF": "Guinean Franc",
+                     "KES": "Kenyan Shilling",
+                     "LSL": "Lesotho Loti",
+                     "LYD": "Libyan Dinar",
+                     "MAD": "Moroccan Dirham",
+                     "MGA": "Malagasy Ariary",
+                     "MUR": "Mauritian Rupee",
+                     "MWK": "Malawian Kwacha",
+                     "MZN": "Mozambican Metical",
+                     "NAD": "Namibian Dollar",
+                     "NGN": "Nigerian Naira",
+                     "RWF": "Rwandan Franc",
+                     "SCR": "Seychellois Rupee",
+                     "SDG": "Sudanese Pound",
+                     "SOS": "Somali Shilling",
+                     "SZL": "Swazi Lilangeni",
+                     "TND": "Tunisian Dinar",
+                     "TZS": "Tanzanian Shilling",
+                     "UGX": "Ugandan Shilling",
+                     "ZMW": "Zambian Kwacha",
+                     "ZWL": "Zimbabwean Dollar"}
+
+pacific_currencies = {"FJD": "Fijian Dollar",
+                      "PGK": "Papua New Guinean Kina",
+                      "SBD": "Solomon Islands Dollar",
+                      "TOP": "Tongan Paʻanga",
+                      "VUV": "Vanuatu Vatu",
+                      "WST": "Samoan Tala"}
+
+all_currencies = {**major_currencies,
+    **americas_currencies,
+    **europe_currencies,
+    **middle_east_currencies,
+    **asia_currencies,
+    **africa_currencies,
+    **pacific_currencies}
+
+
+values = [f"{k} - {v}" for k, v in all_currencies.items()]
+
+# ---- Widgets ----
+
+entry = tk.Entry(root)
+entry.pack(pady=5)
+
+box_from = ttk.Combobox(root, values=values)
+box_from.pack(pady=5)
+box_from.set("USD - US Dollar")
+
+box_to = ttk.Combobox(root, values=values)
+box_to.pack(pady=5)
+box_to.set("EUR - Euro")
+
+result_label = tk.Label(root, text="Result", font=("Arial", 12))
+result_label.pack(pady=5)
+
+# ---- Events ----
+entry.bind("<KeyRelease>", convert_currency)
+box_from.bind("<<ComboboxSelected>>", convert_currency)
+box_to.bind("<<ComboboxSelected>>", convert_currency)
+
+box_from.bind("<KeyRelease>", lambda e: filter_box(e, box_from))
+box_to.bind("<KeyRelease>", lambda e: filter_box(e, box_to))
+
+# ---- Run ----
+root.mainloop()
