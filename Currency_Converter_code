@@ -21,7 +21,7 @@ def convert_currency(*_):
         rate = data.get("rates", {}).get(to_c)
 
         if rate is None:
-            result_lable.config(text="Invalid Currency")
+            result_label.config(text="Invalid Currency")
             return
         result = rate * amount
         result_label.config(text=f"{result:.2f} {to_c}")
@@ -29,7 +29,7 @@ def convert_currency(*_):
     except ValueError:
         result_label.config(text="Enter a valid number")
     except requests.exceptions.RequestException:
-        result_lable.config(text="No internet connection")
+        result_label.config(text="No internet connection")
     except Exception:
         result_label.config(text="Conversion Error")
 
@@ -38,7 +38,7 @@ def filter_box(e, box):
     typed = box.get().lower()
 
     filtered = [v for v in values if typed in v.lower()]
-    box["values"] = matches or values
+    box["values"] = filtered or values
 
 # ---- UI Setup ----
 root = tk.Tk()
